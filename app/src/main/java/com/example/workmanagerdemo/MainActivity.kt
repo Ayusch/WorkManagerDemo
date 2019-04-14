@@ -2,6 +2,7 @@ package com.example.workmanagerdemo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         btn_download.clicks().subscribe {
+            Log.d("ayusch", Thread.currentThread().toString())
             startWorker()
         }
     }
@@ -53,16 +55,19 @@ class MainActivity : AppCompatActivity() {
         val data = Data.Builder()
             .putString("images", jsonString)
             .build()
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
 
         val oneTimeRequest = OneTimeWorkRequest.Builder(ImageDownloadWorker::class.java)
             .setInputData(data)
             .setConstraints(constraints.build())
-            .addTag("demo").build()
+            .addTag("demo")
+            .build()
+
         Toast.makeText(this, "Starting worker", Toast.LENGTH_SHORT).show()
 
-        WorkManager.getInstance().enqueue(oneTimeRequest)
+        WorkManager.getInstance().enqueueUniqueWork("OYO",ExistingWorkPolicy.KEEP,oneTimeRequest)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
@@ -18,13 +19,15 @@ import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
 
 
-class ImageDownloadWorker(mContext: Context, workerParameters: WorkerParameters) : Worker(mContext, workerParameters) {
+class ImageDownloadWorker(private val mContext: Context, workerParameters: WorkerParameters) :
+    Worker(mContext, workerParameters) {
 
     private val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     @SuppressLint("RestrictedApi", "CheckResult")
     override fun doWork(): Result {
+        Log.d("ayusch", Thread.currentThread().toString())
         displayNotification(ProgressUpdateEvent("Please wait...", 3, 0))
         val imagesJson = inputData.getString("images")
         val gson = Gson()
@@ -39,27 +42,26 @@ class ImageDownloadWorker(mContext: Context, workerParameters: WorkerParameters)
         return Result.Success()
     }
 
+    @SuppressLint("CheckResult")
     private fun downloadImage(image: Image, index: Int) {
         val client = OkHttpClient()
         val request = Request.Builder()
-                .url(image.url)
-                .build()
+            .url(image.url)
+            .build()
+
         try {
             val response = client.newCall(request).execute()
             val bitmap = BitmapFactory.decodeStream(response.body()?.byteStream())
-            ImageUtil.saveBitmap(applicationContext, bitmap, image.title, object : Callback<String> {
-                override fun onError(e: Throwable) {
-                    e.printStackTrace()
-                }
 
-                override fun onSuccess(path: String) {
-                    displayNotification(ProgressUpdateEvent(image.title, 3, index + 1))
-                    EventBus.getDefault().post(ImageDownloadedEvent(path, image.title, image.id))
-                }
+            ImageUtil.saveBitmap(mContext, bitmap, image.title).subscribe({ img ->
+                displayNotification(ProgressUpdateEvent(image.title, 3, index + 1))
+                EventBus.getDefault().post(ImageDownloadedEvent(img, image.title, image.id))
+            }, { error ->
+                error.printStackTrace()
             })
 
         } catch (e: Exception) {
-
+            e.printStackTrace()
         }
     }
 
@@ -69,16 +71,16 @@ class ImageDownloadWorker(mContext: Context, workerParameters: WorkerParameters)
     private fun displayNotification(prog: ProgressUpdateEvent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                    notificationChannel,
-                    notificationChannel,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                notificationChannel,
+                notificationChannel,
+                NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.enableVibration(false)
             notificationManager.createNotificationChannel(channel)
         }
 
         val notificationBuilder =
-                NotificationCompat.Builder(applicationContext, notificationChannel)
+            NotificationCompat.Builder(applicationContext, notificationChannel)
 
         val remoteView = RemoteViews(applicationContext.packageName, R.layout.custom_notif)
         remoteView.setImageViewResource(R.id.iv_notif, R.drawable.eminem)
@@ -87,8 +89,8 @@ class ImageDownloadWorker(mContext: Context, workerParameters: WorkerParameters)
         remoteView.setProgressBar(R.id.pb_notif, prog.total, prog.progress, false)
 
         notificationBuilder
-                .setContent(remoteView)
-                .setSmallIcon(R.drawable.eminem)
+            .setContent(remoteView)
+            .setSmallIcon(R.drawable.eminem)
 
         notificationManager.notify(notificationId, notificationBuilder.build())
     }

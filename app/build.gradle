@@ -38,13 +38,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
     // Kotlin + coroutines
-    implementation "android.arch.work:work-runtime-ktx:$work_version"
+    implementation "android.arch.work:work-runtime-ktx:1.0.0"
     // optional - RxJava2 support
-    implementation "android.arch.work:work-rxjava2:$work_version"
+    implementation "android.arch.work:work-rxjava2:1.0.0"
 
-    implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.0.0-alpha2'
-
-    implementation 'com.jakewharton.rxbinding3:rxbinding-core:3.0.0-alpha2'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
