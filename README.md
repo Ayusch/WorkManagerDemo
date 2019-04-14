@@ -1,4 +1,3 @@
-Work Manager
 
 Implementing Work Manager in Android
 
