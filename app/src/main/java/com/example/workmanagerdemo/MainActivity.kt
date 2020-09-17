@@ -2,11 +2,9 @@ package com.example.workmanagerdemo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
-import com.jakewharton.rxbinding3.view.clicks
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
