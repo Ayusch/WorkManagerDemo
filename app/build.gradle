@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-def work_version = '1.0.0'
+def work_version = '2.4.0'
 
 android {
     compileSdkVersion 28
@@ -38,9 +38,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
     // Kotlin + coroutines
-    implementation "android.arch.work:work-runtime-ktx:1.0.0"
-    // optional - RxJava2 support
-    implementation "android.arch.work:work-rxjava2:1.0.0"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
     implementation 'com.google.code.gson:gson:2.8.5'

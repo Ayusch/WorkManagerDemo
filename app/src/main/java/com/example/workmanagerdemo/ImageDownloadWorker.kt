@@ -27,14 +27,14 @@ class ImageDownloadWorker(private val mContext: Context, workerParameters: Worke
 
     @SuppressLint("RestrictedApi", "CheckResult")
     override fun doWork(): Result {
-        Log.d("ayusch", Thread.currentThread().toString())
+        Log.d("AndroidVille", Thread.currentThread().toString())
         displayNotification(ProgressUpdateEvent("Please wait...", 3, 0))
         val imagesJson = inputData.getString("images")
         val gson = Gson()
         val listOfImages = gson.fromJson<List<Image>>(imagesJson, object : TypeToken<List<Image>>() {}.type);
 
         listOfImages.forEachIndexed { index, image ->
-            Thread.sleep(1000)
+            Thread.sleep(1000) //emulating network call.
             downloadImage(image, index)
         }
 

@@ -45,8 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_download.clicks().subscribe {
-            Log.d("ayusch", Thread.currentThread().toString())
+        btn_download.setOnClickListener {
             startWorker()
         }
     }
@@ -67,7 +66,8 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, "Starting worker", Toast.LENGTH_SHORT).show()
 
-        WorkManager.getInstance().enqueueUniqueWork("OYO",ExistingWorkPolicy.KEEP,oneTimeRequest)
+        WorkManager.getInstance(this)
+            .enqueueUniqueWork("AndroidVille", ExistingWorkPolicy.KEEP, oneTimeRequest)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
